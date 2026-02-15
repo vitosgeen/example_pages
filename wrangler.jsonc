@@ -1,0 +1,13 @@
+{
+    "name": "example_pages",
+    "main": "index.html",
+    "rules": [
+        {
+            "pattern": "/(.*)",
+            "zone": "public",
+            "headers": {
+                "Cache-Control": "public, max-age=31536000"
+            }
+        }
+    ]
+}
