@@ -1,13 +1,6 @@
 {
+    "$schema": "node_modules/wrangler/config-schema.json",
     "name": "examplepages",
-    "main": "index.html",
-    "rules": [
-        {
-            "pattern": "/(.*)",
-            "zone": "public",
-            "headers": {
-                "Cache-Control": "public, max-age=31536000"
-            }
-        }
-    ]
+    "pages_build_output_dir": "public",
+    "compatibility_date": "2025-02-15"
 }
