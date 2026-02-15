@@ -1,0 +1,60 @@
+
+> examplepages@0.0.0 dev
+> wrangler dev
+
+
+ ⛅️ wrangler 4.65.0
+───────────────────
+Your Worker has access to the following bindings:
+Binding                                       Resource                  Mode
+env.ASSETS                                    Assets                    local
+env.SECRET_KEY ("super-secret-password")      Environment Variable      local
+
+⎔ Starting local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+[wrangler:info] Ready on http://localhost:8787
+[SERVE] / -> /static/index.html
+[wrangler:info] GET / 307 Temporary Redirect (11ms)
+[wrangler:info] GET /static/ 200 OK (8ms)
+[SERVE] / -> /__bots/index.html
+[wrangler:info] GET / 307 Temporary Redirect (5ms)
+[wrangler:info] GET /__bots/ 200 OK (3ms)
+[wrangler:info] GET / 307 Temporary Redirect (82ms)
+[SERVE] / -> /__bots/index.html
+[wrangler:info] GET /__bots/ 200 OK (5ms)
+[SERVE] / -> /__bots/index.html
+[wrangler:info] GET / 307 Temporary Redirect (9ms)
+[wrangler:info] GET /__bots/ 200 OK (4ms)
+[SERVE] / -> /static/index.html
+[wrangler:info] GET / 307 Temporary Redirect (5ms)
+[wrangler:info] GET /static/ 200 OK (3ms)
+[SERVE] / -> /__bots/index.html
+[wrangler:info] GET / 307 Temporary Redirect (7ms)
+[wrangler:info] GET /__bots/ 200 OK (6ms)
+[SERVE] / -> /__bots/index.html
+[wrangler:info] GET /__bots/ 200 OK (3ms)
+[wrangler:info] GET / 307 Temporary Redirect (46ms)
+[SERVE] / -> /__bots/index.html
+[wrangler:info] GET / 307 Temporary Redirect (4ms)
+[wrangler:info] GET /__bots/ 200 OK (3ms)
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+[SERVE] / -> /static/index.html
+[wrangler:info] GET / 200 OK (26ms)
+[SERVE] / -> /__bots/index.html
+[wrangler:info] GET / 200 OK (6ms)
+[SERVE] / -> /__bots/index.html
+[wrangler:info] GET / 200 OK (64ms)
+[SERVE] / -> /__bots/index.html
+[wrangler:info] GET / 200 OK (7ms)
+[SERVE] / -> /__bots/index.html
+[wrangler:info] GET / 200 OK (5ms)
+[SERVE] / -> /static/index.html
+[wrangler:info] GET / 200 OK (5ms)
+[SERVE] /about -> /__bots/about
+[wrangler:info] GET /about 200 OK (7ms)
+[SERVE] /about -> /__bots/about
+[wrangler:info] GET /about 200 OK (4ms)
+[SERVE] /about -> /__bots/about
+[wrangler:info] GET /about 200 OK (6ms)

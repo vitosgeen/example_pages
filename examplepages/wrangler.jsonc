@@ -6,9 +6,13 @@
 	"$schema": "node_modules/wrangler/config-schema.json",
 	"name": "examplepages",
 	"compatibility_date": "2026-02-12",
+	"main": "src/index.js",
 	"assets": {
-		// The path to the directory containing the `index.html` file to be served at `/`
-		"directory": "./public"
+		"directory": "./public",
+		"binding": "ASSETS"
+	},
+	"vars": {
+		"SECRET_KEY": "super-secret-password"
 	},
 	"observability": {
 		"enabled": true
