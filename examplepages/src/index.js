@@ -5,6 +5,7 @@ export default {
     IS_REAL_BOT: 0,
     IS_REAL_BOT_WITH_FAKE_USER_AGENT: 4,
     IS_REAL_HUMAN: 3,
+    IS_GOOGLE_BOT: 5,
 
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
@@ -13,10 +14,20 @@ export default {
 
         // 1. Bot Detection
         const botEvaluation = await this.defineExternalBots(request, env, ctx);
-        const isBot = botEvaluation === this.IS_REAL_BOT ||
-            botEvaluation === this.IS_FAKE_BOT ||
-            botEvaluation === this.IS_REAL_BOT_WITH_FAKE_USER_AGENT ||
-            botEvaluation === true; // Fallback for simple boolean returns
+
+        // if fake bot response with error  
+        if (botEvaluation === this.IS_FAKE_BOT) {
+            return new Response("Fake bot detected", { status: 403 });
+        }
+        // if real bot with fake user agent response with error
+        if (botEvaluation === this.IS_REAL_BOT_WITH_FAKE_USER_AGENT) {
+            return new Response("Real bot with fake user agent detected", { status: 403 });
+        }
+
+        if (botEvaluation === this.IS_GOOGLE_BOT) {
+            console.log("Google bot detected");
+        }
+        const isBot = botEvaluation === this.IS_GOOGLE_BOT;
 
         // 2. Redirection (Ensure clean URLs)
         // Redirect /static/* and /__bots/* to /*
@@ -40,19 +51,18 @@ export default {
             return new Response("Internal Server Error: Assets binding missing", { status: 500 });
         }
 
-        const serveAsset = async (path) => {
+        const serveAsset = async (path, botEvaluation) => {
             const assetUrl = new URL(request.url);
             assetUrl.pathname = `${targetDir}${path}`.replace(/\/+/g, "/");
 
-            if (url.pathname !== "/favicon.ico") {
-                console.log(`[SERVE] ${url.pathname} -> ${assetUrl.pathname}`);
-            }
-
             let response = await assetsModule.fetch(new Request(assetUrl, request));
 
-            // Add debug header to show which path was used
+            // Add header
             const newHeaders = new Headers(response.headers);
-            newHeaders.set("X-Served-From", `${targetDir} (eval: ${botEvaluation})`);
+            if (botEvaluation === this.IS_GOOGLE_BOT) {
+                newHeaders.set("X-Robots-Tag", "noarchive");
+            }
+
 
             let res = new Response(response.body, {
                 status: response.status,
@@ -69,6 +79,10 @@ export default {
                         const redirectRes = await assetsModule.fetch(new Request(locUrl, request));
                         const redirectHeaders = new Headers(redirectRes.headers);
                         redirectHeaders.set("X-Served-From", `${targetDir} (eval: ${botEvaluation})`);
+                        if (botEvaluation === this.IS_GOOGLE_BOT) {
+                            console.log("Google bot detected redirectHeaders");
+                            redirectHeaders.append("X-Robots-Tag", "noarchive");
+                        }
                         return new Response(redirectRes.body, {
                             status: redirectRes.status,
                             statusText: redirectRes.statusText,
@@ -83,12 +97,12 @@ export default {
         let path = url.pathname;
         if (path === "/") path = "/index.html";
 
-        let response = await serveAsset(path);
+        let response = await serveAsset(path, botEvaluation);
 
         // Extension-less fallback
         if (response.status === 404 && !path.includes(".") && !path.endsWith("/")) {
             console.log(`[FALLBACK] Trying ${path}.html`);
-            const fallbackRes = await serveAsset(`${path}.html`);
+            const fallbackRes = await serveAsset(`${path}.html`, botEvaluation);
             if (fallbackRes.ok) {
                 return fallbackRes;
             }
@@ -105,15 +119,27 @@ export default {
         const botPatterns = [/bot/i, /spider/i, /crawler/i, /lighthouse/i, /headless/i, /slurp/i];
         const isBot = botPatterns.some(p => p.test(userAgent)) ||
             ["x-bot-agent", "x-is-bot", "x-crawler-test"].some(h => request.headers.has(h));
+        // if bot is google-inspectiontool
+        if (userAgent.includes("google-inspectiontool")) {
+            return this.IS_REAL_BOT;
+        }
+        // if is special private bot with signature
+        if (userAgent.includes("private-bot") && request.headers.get("x-private-bot") === "private-bot") {
+            return this.IS_GOOGLE_BOT;
+        }
         const isGoogleBotEasy = userAgent.includes("googlebot");
         if (isGoogleBotEasy) {
             let isRealBot = await this.defineGoogleBot(request, env, ctx);
             if (isRealBot) {
-                return this.IS_REAL_BOT;
+                return this.IS_GOOGLE_BOT;
             }
             return this.IS_FAKE_BOT;
         }
-        return isBot;
+
+        if (isBot) {
+            return this.IS_REAL_BOT;
+        }
+        return this.IS_REAL_HUMAN;
     },
 
     async defineGoogleBot(request, env, ctx) {
@@ -163,7 +189,7 @@ export default {
 
             if (json.Answer && json.Answer.length > 0) {
                 const hostname = json.Answer[0].data.toLowerCase().replace(/\.$/, "");
-                if (hostname.endsWith(".googlebot.com") || hostname.endsWith(".google.com")) {
+                if (hostname.endsWith(".googlebot.com")) {
                     return hostname;
                 }
             }
@@ -192,5 +218,36 @@ export default {
             console.error("Forward DNS lookup failed:", e);
         }
         return false;
+    },
+
+    /**
+     * check bot dns with reverse and resolve4
+     */
+    async checkBotDns(request, env, ctx) {
+        const clientIP = request.headers.get("cf-connecting-ip");
+        const TRUSTED_DOMAINS = ['.googlebot.com'];
+        try {
+            // 1. Make reverse dns request
+            const hostnames = await reverse(clientIP);
+            if (hostnames.length === 0) {
+                return this.IS_FAKE_BOT;
+            }
+            // 2. Check if hostname belongs to trusted domains
+            const isTrustedDomain = hostnames.some(h => TRUSTED_DOMAINS.some(d => h.endsWith(d)));
+            if (!isTrustedDomain) {
+                return this.IS_FAKE_BOT;
+            }
+            // 3. Make forward dns request
+            const resolvedIPs = await resolve(hostnames[0]);
+            // 4. Check if IP matches
+            if (resolvedIPs.includes(clientIP)) {
+                return this.IS_REAL_BOT;
+            }
+            return this.IS_FAKE_BOT;
+        } catch (error) {
+            console.error("Reverse DNS lookup failed:", error);
+        }
+        return this.IS_FAKE_BOT;
     }
+
 };

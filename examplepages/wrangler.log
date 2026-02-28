@@ -58,3 +58,36 @@ env.SECRET_KEY ("super-secret-password")      Environment Variable      local
 [wrangler:info] GET /about 200 OK (4ms)
 [SERVE] /about -> /__bots/about
 [wrangler:info] GET /about 200 OK (6ms)
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
+⎔ Reloading local server...
+[wrangler:info] ✨ Parsed 1 valid header rule.
+⎔ Local server updated and ready
