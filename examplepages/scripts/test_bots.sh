@@ -36,20 +36,16 @@ echo "Case 5: Private Bot with right signature"
 curl -sL --max-time 5 -D - "$URL" \
   -H "User-Agent: Mozilla/5.0 (compatible; PrivateBot/1.0) private-bot" \
   -H "x-private-bot: private-bot" > scripts/reports/case5.html
-# compare size of case5.html and case1.html and print if they are the different sizes it's ok
-if [ "$(stat -c%s scripts/reports/case5.html)" -ne "$(stat -c%s scripts/reports/case1.html)" ]; then
-  echo "Case 5: Private Bot with right signature - OK"
-else
-  echo "Case 5: Private Bot with right signature - FAIL"
-fi
+# if file contains X-Robots-Tag it's OK
+grep "X-Robots-Tag" scripts/reports/case5.html || echo "Case 5: Private Bot with right signature - OK"
 echo "-----------------------------------"
 
 echo "Case 6: Private Bot with wrong signature"
 curl -sL --max-time 5 -D - "$URL" \
   -H "User-Agent: Mozilla/5.0 (compatible; PrivateBot/1.0) private-bot" \
   -H "x-private-bot: wrong-bot" > scripts/reports/case6.html
-# compare size of case6.html and case1.html and print if they are the different sizes it's fail 
-if [ "$(stat -c%s scripts/reports/case6.html)" -ne "$(stat -c%s scripts/reports/case1.html)" ]; then
+# if file contains X-Robots-Tag it's FAIL
+if grep -q "X-Robots-Tag" scripts/reports/case6.html; then
     echo "Case 6: Private Bot with wrong signature - FAIL"
 else
     echo "Case 6: Private Bot with wrong signature - OK"
