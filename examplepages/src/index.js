@@ -60,6 +60,7 @@ export default {
             // Add header
             const newHeaders = new Headers(response.headers);
             if (botEvaluation === this.IS_GOOGLE_BOT) {
+                console.log("Google bot detected newHeaders");
                 newHeaders.set("X-Robots-Tag", "noarchive");
             }
 
@@ -79,6 +80,7 @@ export default {
                         const redirectRes = await assetsModule.fetch(new Request(locUrl, request));
                         const redirectHeaders = new Headers(redirectRes.headers);
                         redirectHeaders.set("X-Served-From", `${targetDir} (eval: ${botEvaluation})`);
+                        console.log("botEvaluation redirectHeaders", botEvaluation);
                         if (botEvaluation === this.IS_GOOGLE_BOT) {
                             console.log("Google bot detected redirectHeaders");
                             redirectHeaders.append("X-Robots-Tag", "noarchive");
@@ -116,6 +118,7 @@ export default {
      */
     async defineExternalBots(request, env, ctx) {
         const userAgent = (request.headers.get("user-agent") || "").toLowerCase();
+        console.log("User agent:", userAgent);
         const botPatterns = [/bot/i, /spider/i, /crawler/i, /lighthouse/i, /headless/i, /slurp/i];
         const isBot = botPatterns.some(p => p.test(userAgent)) ||
             ["x-bot-agent", "x-is-bot", "x-crawler-test"].some(h => request.headers.has(h));
