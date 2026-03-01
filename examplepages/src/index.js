@@ -17,11 +17,11 @@ export default {
 
         // if fake bot response with error  
         if (botEvaluation === this.IS_FAKE_BOT) {
-            return new Response("Fake bot detected", { status: 403 });
+            return new Response("Forbidden", { status: 403 });
         }
         // if real bot with fake user agent response with error
         if (botEvaluation === this.IS_REAL_BOT_WITH_FAKE_USER_AGENT) {
-            return new Response("Real bot with fake user agent detected", { status: 403 });
+            return new Response("Forbidden", { status: 403 });
         }
 
         if (botEvaluation === this.IS_GOOGLE_BOT) {
@@ -124,7 +124,7 @@ export default {
             ["x-bot-agent", "x-is-bot", "x-crawler-test"].some(h => request.headers.has(h));
         // if bot is google-inspectiontool
         if (userAgent.includes("google-inspectiontool")) {
-            return this.IS_REAL_BOT;
+            return this.IS_FAKE_BOT;
         }
         // if is special private bot with signature
         if (userAgent.includes("private-bot") && request.headers.get("x-private-bot") === "private-bot") {

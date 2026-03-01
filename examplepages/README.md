@@ -81,3 +81,13 @@ make deploy
 - `scripts/test_bots.sh` - Automated bash scripts containing `curl` commands simulating various User-Agents to test local routing behaviors.
 - `Makefile` - Project automation commands.
 - `wrangler.jsonc` - Cloudflare Wrangler configuration defining environments, entry points, compatibility dates, and asset bindings.
+
+
+# rules for behavior
+
+1. Regular user traffic is served from the `/static` asset directory.
+2. Googlebot traffic is served from the `/__bots` asset directory.
+3. If googlebot is detected, but it is not verified, then it is served from the `/static` asset directory.
+4. Any user or bot traffic that is not detected as a bot is served from the `/static` asset directory.
+5. Any inspection bot traffic is served from the `/static` asset directory.
+6. Private bot traffic is served from the `/_bots` asset directory.
