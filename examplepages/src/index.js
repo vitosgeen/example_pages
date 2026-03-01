@@ -95,6 +95,11 @@ export default {
                     }
                 }
             }
+            // if botEvaluation is IS_GOOGLE_BOT print code page from headers
+            if (botEvaluation === this.IS_GOOGLE_BOT) {
+                console.log("Google bot detected V3");
+                console.log("Code page: ", res.status);
+            }
             return res;
         };
 
@@ -110,6 +115,12 @@ export default {
             if (fallbackRes.ok) {
                 return fallbackRes;
             }
+        }
+
+        // if botEvaluation is IS_GOOGLE_BOT print code page from headers
+        if (botEvaluation === this.IS_GOOGLE_BOT) {
+            console.log("Google bot detected V4");
+            console.log("Code page: ", response.status);
         }
 
         return response;
