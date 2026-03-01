@@ -168,6 +168,7 @@ dist
 .env*
 !.env.example
 .wrangler/
+wrangler.pid
 
 # vscode
 .vscode
