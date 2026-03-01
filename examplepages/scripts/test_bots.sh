@@ -34,7 +34,7 @@ echo "-----------------------------------"
 echo "Case 3: Fake Googlebot (Pretending to be Googlebot)"
 curl -sL --max-time 5 -D - "$URL" \
   -H "User-Agent: Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)" > scripts/reports/case3.html
-if  grep -qE "HTTP.* 403.*" scripts/reports/case3.html && grep -qE "content-length: 9" scripts/reports/case3.html; then
+if  grep -qE "HTTP.* 200.*" scripts/reports/case3.html && grep -qE "x-served-from: /static" scripts/reports/case3.html; then
     echo "Case 3: Fake Googlebot (Pretending to be Googlebot) - OK"
 else
     echo "Case 3: Fake Googlebot (Pretending to be Googlebot) - FAIL"

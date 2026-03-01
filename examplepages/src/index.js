@@ -17,11 +17,13 @@ export default {
 
         // if fake bot response with error  
         if (botEvaluation === this.IS_FAKE_BOT) {
-            return new Response("Forbidden", { status: 403 });
+            console.log("Fake bot detected");
+            // return new Response("Forbidden", { status: 403 });
         }
         // if real bot with fake user agent response with error
         if (botEvaluation === this.IS_REAL_BOT_WITH_FAKE_USER_AGENT) {
-            return new Response("Forbidden", { status: 403 });
+            console.log("Real bot with fake user agent detected");
+            // return new Response("Forbidden", { status: 403 });
         }
 
         if (botEvaluation === this.IS_GOOGLE_BOT) {
@@ -60,7 +62,7 @@ export default {
             // Add header
             const newHeaders = new Headers(response.headers);
             if (botEvaluation === this.IS_GOOGLE_BOT) {
-                console.log("Google bot detected newHeaders");
+                console.log("Google bot detected V1");
                 newHeaders.set("X-Robots-Tag", "noarchive");
             }
 
@@ -82,7 +84,7 @@ export default {
                         redirectHeaders.set("X-Served-From", `${targetDir} (eval: ${botEvaluation})`);
                         console.log("botEvaluation redirectHeaders", botEvaluation);
                         if (botEvaluation === this.IS_GOOGLE_BOT) {
-                            console.log("Google bot detected redirectHeaders");
+                            console.log("Google bot detected V2");
                             redirectHeaders.append("X-Robots-Tag", "noarchive");
                         }
                         return new Response(redirectRes.body, {
